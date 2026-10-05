@@ -1,0 +1,24 @@
+{
+  "name": "Proyecto SAP",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "frontend",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "mtxr.sqltools",
+        "mtxr.sqltools-driver-pg",
+        "cweijan.vscode-database-client2",
+        "ckolkman.vscode-postgres"
+      ]
+    }
+  },
+  "workspaceFolder": "/workspace",
+  "runServices": ["frontend", "backend", "db"],
+  "shutdownAction": "stopCompose",
+  "forwardPorts": [5175, 8003, 5435],
+  "portsAttributes": {
+    "5175": { "label": "Vue / Vite", "onAutoForward": "openBrowser" },
+    "8003": { "label": "FastAPI" },
+    "5435": { "label": "PostgreSQL" }
+  }
+}

@@ -1,0 +1,49 @@
+services:
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile.dev
+    working_dir: /workspace/frontend
+    volumes:
+      - ..:/workspace:cached
+      - frontend_node_modules:/workspace/frontend/node_modules
+    ports:
+      - "5175:5173"
+    depends_on:
+      - backend
+
+  backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    working_dir: /workspace/backend
+    volumes:
+      - ..:/workspace:cached
+    environment:
+      DATABASE_URL: postgresql://app:app_dev_password@db:5432/proyecto_sap
+    ports:
+      - "8003:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: proyecto_sap
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: app_dev_password
+    ports:
+      - "5435:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app -d proyecto_sap"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+
+volumes:
+  frontend_node_modules:
+  postgres_data:
